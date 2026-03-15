@@ -53,7 +53,7 @@ function LoginForm() {
         <Input
           id="username"
           type="text"
-          placeholder="e.g. ag10293"
+          placeholder="e.g. abc123@nyu.edu"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           autoComplete="username"
