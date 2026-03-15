@@ -115,6 +115,26 @@ export function MetadataCard({ video }: MetadataCardProps) {
             </div>
           </div>
         )}
+
+        {/* Video description */}
+        {video.video_description && (
+          <div className="pt-1 border-t border-slate-100">
+            <p className="text-xs font-medium text-slate-500 mb-1.5">Video description</p>
+            <p className="text-xs text-slate-600 whitespace-pre-wrap leading-relaxed line-clamp-6">
+              {video.video_description}
+            </p>
+          </div>
+        )}
+
+        {/* Channel description */}
+        {video.channel_description && (
+          <div className="border-t border-slate-100 pt-1">
+            <p className="text-xs font-medium text-slate-500 mb-1.5">Channel description</p>
+            <p className="text-xs text-slate-600 whitespace-pre-wrap leading-relaxed line-clamp-4">
+              {video.channel_description}
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

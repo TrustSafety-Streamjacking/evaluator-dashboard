@@ -19,6 +19,7 @@ const VideoSchema = new Schema(
     channel_title: String,
     channel_url: String,
     channel_description: String,
+    video_description: String,
     channel_risk_score: Number,
     channel_signals: [String],
     confidence_score: Number,

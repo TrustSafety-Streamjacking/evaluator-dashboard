@@ -21,6 +21,7 @@ export interface VideoDocument {
   channel_title?: string;
   channel_url?: string;
   channel_description?: string;
+  video_description?: string;
   confidence_score?: number;
   detected_at?: string;
   detection_count?: number;
