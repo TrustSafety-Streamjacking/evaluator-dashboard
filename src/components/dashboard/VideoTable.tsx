@@ -19,9 +19,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 interface VideoTableProps {
   videos: VideoDocument[];
   isLoading?: boolean;
+  filterParams?: string;
 }
 
-export function VideoTable({ videos, isLoading }: VideoTableProps) {
+export function VideoTable({ videos, isLoading, filterParams }: VideoTableProps) {
   if (isLoading) {
     return (
       <div className="flex-1 overflow-auto">
@@ -95,7 +96,7 @@ export function VideoTable({ videos, isLoading }: VideoTableProps) {
                   )}
                   <div className="min-w-0">
                     <Link
-                      href={`/videos/${video.video_id}`}
+                      href={`/videos/${video.video_id}${filterParams ? `?${filterParams}` : ""}`}
                       className="text-sm font-medium text-slate-900 hover:text-blue-600 line-clamp-2 leading-snug"
                     >
                       {video.video_title || video.video_id}

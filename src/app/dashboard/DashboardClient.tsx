@@ -23,7 +23,7 @@ export function DashboardClient() {
       <StatsBar stats={data?.stats} />
       <FilterBar />
       <div className="flex-1 flex flex-col overflow-hidden bg-white border-x border-b border-slate-200 mx-6 mt-4 mb-4 rounded-lg shadow-sm">
-        <VideoTable videos={data?.videos ?? []} isLoading={isLoading} />
+        <VideoTable videos={data?.videos ?? []} isLoading={isLoading} filterParams={searchParams.toString()} />
         {data && (
           <PaginationControls
             page={data.page}

@@ -10,10 +10,12 @@ const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "fallback-
 
 interface PageProps {
   params: Promise<{ videoId: string }>;
+  searchParams: Promise<{ status?: string; risk_category?: string; sort?: string; page?: string }>;
 }
 
-export default async function VideoDetailPage({ params }: PageProps) {
+export default async function VideoDetailPage({ params, searchParams }: PageProps) {
   const { videoId } = await params;
+  const { status, risk_category } = await searchParams;
 
   // Get reviewer info from cookie
   const cookieStore = await cookies();
@@ -36,24 +38,34 @@ export default async function VideoDetailPage({ params }: PageProps) {
   const video = await Video.findOne({ video_id: videoId }).lean();
   if (!video) notFound();
 
-  // Find adjacent unlabeled videos for prev/next navigation
+  // Find adjacent videos for prev/next navigation, respecting active filters
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const v = video as any;
 
-  const unlabeledFilter = {
-    $or: [{ ground_truth_label: null }, { ground_truth_label: { $exists: false } }],
-  };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const navFilter: Record<string, any> = {};
+
+  if (status === "labeled") {
+    navFilter.ground_truth_label = { $nin: [null], $exists: true };
+  } else {
+    // default: unlabeled
+    navFilter.$or = [{ ground_truth_label: null }, { ground_truth_label: { $exists: false } }];
+  }
+
+  if (risk_category && risk_category !== "all") {
+    navFilter.risk_category = risk_category;
+  }
 
   const [prevVideo, nextVideo] = await Promise.all([
     Video.findOne({
-      ...unlabeledFilter,
+      ...navFilter,
       total_risk_score: { $gt: v.total_risk_score ?? 0 },
     })
       .sort({ total_risk_score: 1 })
       .select("video_id")
       .lean(),
     Video.findOne({
-      ...unlabeledFilter,
+      ...navFilter,
       total_risk_score: { $lt: v.total_risk_score ?? 0 },
     })
       .sort({ total_risk_score: -1 })
@@ -68,6 +80,12 @@ export default async function VideoDetailPage({ params }: PageProps) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const nextId = nextVideo ? (nextVideo as any).video_id : null;
 
+  // Rebuild filter params to forward through navigation links
+  const filterEntries: [string, string][] = [];
+  if (status) filterEntries.push(["status", status]);
+  if (risk_category) filterEntries.push(["risk_category", risk_category]);
+  const filterParams = filterEntries.length > 0 ? new URLSearchParams(filterEntries).toString() : "";
+
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
       <Header username={username} displayName={displayName} />
@@ -75,6 +93,7 @@ export default async function VideoDetailPage({ params }: PageProps) {
         video={serialized}
         prevVideoId={prevId}
         nextVideoId={nextId}
+        filterParams={filterParams}
       />
     </div>
   );

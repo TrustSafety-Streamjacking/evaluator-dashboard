@@ -17,18 +17,21 @@ interface VideoDetailClientProps {
   video: VideoDocument;
   prevVideoId?: string | null;
   nextVideoId?: string | null;
+  filterParams?: string;
 }
 
-export function VideoDetailClient({ video: initialVideo, prevVideoId, nextVideoId }: VideoDetailClientProps) {
+export function VideoDetailClient({ video: initialVideo, prevVideoId, nextVideoId, filterParams }: VideoDetailClientProps) {
   const router = useRouter();
   const [video, setVideo] = useState(initialVideo);
 
+  const qs = filterParams ? `?${filterParams}` : "";
+
   function handleLabeled(updated: VideoDocument) {
     setVideo(updated);
-    // Auto-advance to next unlabeled video after a short delay
+    // Auto-advance to next video after a short delay
     if (nextVideoId) {
       setTimeout(() => {
-        router.push(`/videos/${nextVideoId}`);
+        router.push(`/videos/${nextVideoId}${qs}`);
       }, 1200);
     }
   }
@@ -52,7 +55,7 @@ export function VideoDetailClient({ video: initialVideo, prevVideoId, nextVideoI
             size="sm"
             className="h-8 text-xs"
             disabled={!prevVideoId}
-            onClick={() => prevVideoId && router.push(`/videos/${prevVideoId}`)}
+            onClick={() => prevVideoId && router.push(`/videos/${prevVideoId}${qs}`)}
           >
             <ChevronLeft className="h-3.5 w-3.5 mr-1" />
             Prev unlabeled
@@ -62,7 +65,7 @@ export function VideoDetailClient({ video: initialVideo, prevVideoId, nextVideoI
             size="sm"
             className="h-8 text-xs"
             disabled={!nextVideoId}
-            onClick={() => nextVideoId && router.push(`/videos/${nextVideoId}`)}
+            onClick={() => nextVideoId && router.push(`/videos/${nextVideoId}${qs}`)}
           >
             Next unlabeled
             <ChevronRight className="h-3.5 w-3.5 ml-1" />

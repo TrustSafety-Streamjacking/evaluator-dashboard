@@ -120,7 +120,7 @@ export function MetadataCard({ video }: MetadataCardProps) {
         {video.video_description && (
           <div className="pt-1 border-t border-slate-100">
             <p className="text-xs font-medium text-slate-500 mb-1.5">Video description</p>
-            <p className="text-xs text-slate-600 whitespace-pre-wrap leading-relaxed line-clamp-6">
+            <p className="text-xs text-slate-600 whitespace-pre-wrap leading-relaxed max-h-48 overflow-y-auto">
               {video.video_description}
             </p>
           </div>
@@ -130,7 +130,7 @@ export function MetadataCard({ video }: MetadataCardProps) {
         {video.channel_description && (
           <div className="border-t border-slate-100 pt-1">
             <p className="text-xs font-medium text-slate-500 mb-1.5">Channel description</p>
-            <p className="text-xs text-slate-600 whitespace-pre-wrap leading-relaxed line-clamp-4">
+            <p className="text-xs text-slate-600 whitespace-pre-wrap leading-relaxed max-h-36 overflow-y-auto">
               {video.channel_description}
             </p>
           </div>
