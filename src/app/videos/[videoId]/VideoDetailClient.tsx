@@ -7,6 +7,7 @@ import { VideoDocument } from "@/lib/types";
 import { VideoEmbed } from "@/components/video/VideoEmbed";
 import { MetadataCard } from "@/components/video/MetadataCard";
 import { LabelForm } from "@/components/video/LabelForm";
+import { AnalysisCard } from "@/components/video/AnalysisCard";
 import { RiskBadge } from "@/components/shared/RiskBadge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -112,6 +113,7 @@ export function VideoDetailClient({ video: initialVideo, prevVideoId, nextVideoI
           <Tabs defaultValue="label" className="flex flex-col flex-1 min-h-0">
             <TabsList className="shrink-0 px-1">
               <TabsTrigger value="metadata">Metadata</TabsTrigger>
+              <TabsTrigger value="analysis">Analysis</TabsTrigger>
               <TabsTrigger value="label">
                 Label
                 {video.ground_truth_label && (
@@ -122,6 +124,10 @@ export function VideoDetailClient({ video: initialVideo, prevVideoId, nextVideoI
 
             <TabsContent value="metadata" className="flex-1 overflow-y-auto px-5 py-5 data-[state=inactive]:hidden">
               <MetadataCard video={video} />
+            </TabsContent>
+
+            <TabsContent value="analysis" className="flex-1 overflow-y-auto px-5 py-5 data-[state=inactive]:hidden">
+              <AnalysisCard video={video} />
             </TabsContent>
 
             <TabsContent value="label" className="flex-1 overflow-y-auto px-5 py-5 pb-8 data-[state=inactive]:hidden">

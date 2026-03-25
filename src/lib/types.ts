@@ -42,6 +42,9 @@ export interface VideoDocument {
   is_active?: boolean;
   verification_date?: string | null;
   verification_status?: string | null;
+  tags?: string[];
+  video_signal_scores?: Record<string, number>;
+  channel_signal_scores?: Record<string, number>;
 }
 
 export interface PaginatedVideosResponse {
