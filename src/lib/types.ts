@@ -12,6 +12,23 @@ export interface ValidationRecord {
   reviewer: string;
 }
 
+export interface SoftRedetect {
+  bert_scam_score?: number | null;
+  video_signals?: string[];
+  video_signal_scores?: Record<string, number>;
+  channel_signals?: string[];
+  channel_signal_scores?: Record<string, number>;
+  confidence_score?: number;
+  takeover_type?: string;
+  risk_category?: string;
+  total_risk_score?: number;
+  video_risk_score?: number;
+  channel_risk_score?: number;
+  redetected_at?: string;
+  signals_skipped?: string[];
+  history_available?: boolean;
+}
+
 export interface VideoDocument {
   _id: string;
   video_id: string;
@@ -45,6 +62,7 @@ export interface VideoDocument {
   tags?: string[];
   video_signal_scores?: Record<string, number>;
   channel_signal_scores?: Record<string, number>;
+  soft_redetect?: SoftRedetect | null;
 }
 
 export interface PaginatedVideosResponse {

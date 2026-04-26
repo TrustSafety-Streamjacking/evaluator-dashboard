@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { VideoDocument } from "@/lib/types";
-import { AlertTriangle } from "lucide-react";
+import { VideoDocument, SoftRedetect } from "@/lib/types";
+import { RiskBadge } from "@/components/shared/RiskBadge";
+import { AlertTriangle, Info } from "lucide-react";
 
 interface AnalysisCardProps {
   video: VideoDocument;
@@ -12,7 +13,7 @@ interface ParsedSignal {
   text: string;
   keywords?: string[];
   hasCryptoWarning: boolean;
-  contribution: number; // exact value from score map, or estimated
+  contribution: number;
   hasExactScore: boolean;
 }
 
@@ -54,11 +55,108 @@ export function AnalysisCard({ video }: AnalysisCardProps) {
     video.channel_signal_scores,
     video.channel_risk_score ?? 0,
   );
+  const tags = video.tags ?? [];
+
+  if (video.soft_redetect) {
+    const sr = video.soft_redetect;
+    const srVideoSignals = parseSignals(
+      sr.video_signals ?? [],
+      sr.video_signal_scores,
+      sr.video_risk_score ?? 0,
+    );
+    const srChannelSignals = parseSignals(
+      sr.channel_signals ?? [],
+      sr.channel_signal_scores,
+      sr.channel_risk_score ?? 0,
+    );
+
+    return (
+      <div className="text-sm">
+        {/* Side-by-side columns */}
+        <div className="flex gap-5">
+          {/* Original detection */}
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">Original</p>
+            <AnalysisSection
+              videoRiskScore={video.video_risk_score ?? 0}
+              channelRiskScore={video.channel_risk_score ?? 0}
+              totalRiskScore={video.total_risk_score ?? 0}
+              confidenceScore={video.confidence_score}
+              riskCategory={video.risk_category}
+              videoSignals={videoSignals}
+              channelSignals={channelSignals}
+            />
+          </div>
+
+          {/* Divider */}
+          <div className="w-px bg-slate-200 shrink-0" />
+
+          {/* Soft re-detection */}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-1.5 mb-3">
+              <p className="text-xs font-semibold text-indigo-500 uppercase tracking-wide">Soft Re-detect</p>
+              {sr.redetected_at && (
+                <span className="text-xs text-slate-400 font-normal">
+                  {new Date(sr.redetected_at).toLocaleDateString()}
+                </span>
+              )}
+            </div>
+            <AnalysisSection
+              videoRiskScore={sr.video_risk_score ?? 0}
+              channelRiskScore={sr.channel_risk_score ?? 0}
+              totalRiskScore={sr.total_risk_score ?? 0}
+              confidenceScore={sr.confidence_score}
+              riskCategory={sr.risk_category}
+              videoSignals={srVideoSignals}
+              channelSignals={srChannelSignals}
+              accent="indigo"
+            />
+            {/* Skipped signals note */}
+            {sr.signals_skipped && sr.signals_skipped.length > 0 && (
+              <div className="mt-3 flex items-start gap-1.5 text-xs text-slate-400">
+                <Info className="h-3 w-3 shrink-0 mt-0.5" />
+                <span>Skipped (no live data): {sr.signals_skipped.join(", ")}</span>
+              </div>
+            )}
+            {/* Takeover type */}
+            {sr.takeover_type && sr.takeover_type !== "UNKNOWN" && (
+              <div className="mt-2 text-xs">
+                <span className="text-slate-400">Takeover type: </span>
+                <span className="font-mono text-slate-700">{sr.takeover_type}</span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Tags — full width below */}
+        {tags.length > 0 && (
+          <div className="border-t border-slate-100 pt-3 mt-5">
+            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Tags</p>
+            <div className="flex flex-wrap gap-1.5">
+              {(tagsExpanded ? tags : tags.slice(0, 8)).map((tag, i) => (
+                <span key={i} className="inline-block text-xs bg-slate-100 text-slate-600 rounded px-2 py-0.5">
+                  {tag}
+                </span>
+              ))}
+            </div>
+            {tags.length > 8 && (
+              <button
+                onClick={() => setTagsExpanded((v) => !v)}
+                className="mt-1.5 text-xs text-blue-600 hover:underline"
+              >
+                {tagsExpanded ? "Show less" : `Show ${tags.length - 8} more`}
+              </button>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Single-column layout (no soft_redetect)
   const totalScore = video.total_risk_score ?? 0;
-  // Use max absolute contribution as the bar scale so negatives render sensibly
   const allContributions = [...videoSignals, ...channelSignals].map((s) => Math.abs(s.contribution));
   const maxContribution = allContributions.length > 0 ? Math.max(...allContributions) : 1;
-  const tags = video.tags ?? [];
 
   return (
     <div className="space-y-5 text-sm">
@@ -142,11 +240,99 @@ export function AnalysisCard({ video }: AnalysisCardProps) {
   );
 }
 
+// Shared section used in both original and soft_redetect columns
+interface AnalysisSectionProps {
+  videoRiskScore: number;
+  channelRiskScore: number;
+  totalRiskScore: number;
+  confidenceScore?: number | null;
+  riskCategory?: string | null;
+  videoSignals: ParsedSignal[];
+  channelSignals: ParsedSignal[];
+  accent?: "amber" | "indigo";
+}
+
+function AnalysisSection({
+  videoRiskScore,
+  channelRiskScore,
+  totalRiskScore,
+  confidenceScore,
+  riskCategory,
+  videoSignals,
+  channelSignals,
+  accent = "amber",
+}: AnalysisSectionProps) {
+  const allContributions = [...videoSignals, ...channelSignals].map((s) => Math.abs(s.contribution));
+  const maxContribution = allContributions.length > 0 ? Math.max(...allContributions) : 1;
+  const videoBarColor = accent === "indigo" ? "bg-indigo-400" : "bg-amber-400";
+  const videoScoreColor = accent === "indigo" ? "text-indigo-600" : "text-amber-600";
+
+  return (
+    <div className="space-y-4">
+      {/* Score breakdown */}
+      <div className="space-y-2">
+        {riskCategory && (
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-slate-400 text-xs">Risk category</span>
+            <RiskBadge category={riskCategory} />
+          </div>
+        )}
+        <ScoreBar label="Video risk" score={videoRiskScore} total={totalRiskScore} color={videoBarColor} />
+        <ScoreBar label="Channel risk" score={channelRiskScore} total={totalRiskScore} color="bg-blue-400" />
+        <div className="flex items-center justify-between pt-1 border-t border-slate-100">
+          <span className="text-slate-500 text-xs">Total</span>
+          <span className="font-mono font-semibold text-slate-900">{Math.round(totalRiskScore)}</span>
+        </div>
+        {confidenceScore != null && (
+          <div className="flex items-center justify-between">
+            <span className="text-slate-400 text-xs">Confidence</span>
+            <span className={`font-mono font-semibold text-xs ${getConfColor(confidenceScore)}`}>
+              {confidenceScore.toFixed(3)}
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* Video signals */}
+      {videoSignals.length > 0 && (
+        <div>
+          <p className={`text-xs font-semibold uppercase tracking-wide mb-2 ${videoScoreColor}`}>
+            Video <span className="font-mono normal-case">({Math.round(videoRiskScore)} pts)</span>
+          </p>
+          <div className="space-y-3">
+            {videoSignals.map((s, i) => (
+              <SignalRow key={i} signal={s} maxContribution={maxContribution} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Channel signals */}
+      {channelSignals.length > 0 && (
+        <div>
+          <p className="text-xs font-semibold text-blue-600 uppercase tracking-wide mb-2">
+            Channel <span className="font-mono normal-case">({Math.round(channelRiskScore)} pts)</span>
+          </p>
+          <div className="space-y-3">
+            {channelSignals.map((s, i) => (
+              <SignalRow key={i} signal={s} maxContribution={maxContribution} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {videoSignals.length === 0 && channelSignals.length === 0 && (
+        <p className="text-slate-400 text-xs">No signals.</p>
+      )}
+    </div>
+  );
+}
+
 function ScoreBar({ label, score, total, color }: { label: string; score: number; total: number; color: string }) {
   const pct = total > 0 ? Math.min(100, Math.round((score / total) * 100)) : 0;
   return (
     <div className="flex items-center gap-2">
-      <span className="text-slate-500 text-xs w-24 shrink-0">{label}</span>
+      <span className="text-slate-500 text-xs w-20 shrink-0">{label}</span>
       <div className="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
         <div className={`h-full rounded-full ${color}`} style={{ width: `${pct}%` }} />
       </div>

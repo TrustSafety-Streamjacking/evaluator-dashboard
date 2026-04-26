@@ -81,8 +81,8 @@ export function VideoDetailClient({ video: initialVideo, prevVideoId, nextVideoI
           <VideoEmbed videoId={video.video_id} title={video.video_title} />
         </div>
 
-        {/* Right column: fixed width, full-height panel */}
-        <div className="w-[420px] shrink-0 border-l border-slate-200 bg-white flex flex-col overflow-hidden">
+        {/* Right column: fixed width, full-height panel; wider when soft_redetect is available */}
+        <div className={`${video.soft_redetect ? 'w-[760px]' : 'w-[420px]'} shrink-0 border-l border-slate-200 bg-white flex flex-col overflow-hidden`}>
           {/* Title / channel header */}
           <div className="px-5 py-4 border-b border-slate-100 shrink-0">
             <div className="flex items-start gap-2 flex-wrap mb-1">
