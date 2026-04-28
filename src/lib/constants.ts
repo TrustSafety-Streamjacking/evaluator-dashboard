@@ -1,4 +1,4 @@
-import { LabelValue, RiskCategory } from "./types";
+import { DetectorVersion, LabelValue, RiskCategory } from "./types";
 
 export const PAGE_SIZE = 25;
 
@@ -38,6 +38,18 @@ export const LABEL_COLORS: Record<LabelValue, string> = {
   false_positive: "bg-orange-100 text-orange-800 border-orange-200",
   true_negative: "bg-green-100 text-green-800 border-green-200",
   false_negative: "bg-purple-100 text-purple-800 border-purple-200",
+};
+
+export const VERSION_COLORS: Record<DetectorVersion, string> = {
+  V1: "bg-slate-100 text-slate-600 border-slate-300",
+  V2: "bg-blue-100 text-blue-700 border-blue-200",
+  V3: "bg-violet-100 text-violet-700 border-violet-200",
+};
+
+export const VERSION_DATES: Record<DetectorVersion, string> = {
+  V1: "before 2026-01-01",
+  V2: "2026-01-01 – 2026-04-24",
+  V3: "from 2026-04-25",
 };
 
 export const LABEL_DISPLAY: Record<LabelValue, string> = {

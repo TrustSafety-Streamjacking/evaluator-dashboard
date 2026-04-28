@@ -59,6 +59,7 @@ export interface VideoDocument {
   is_active?: boolean;
   verification_date?: string | null;
   verification_status?: string | null;
+  detector_version?: DetectorVersion | null;
   tags?: string[];
   video_signal_scores?: Record<string, number>;
   channel_signal_scores?: Record<string, number>;
@@ -88,6 +89,8 @@ export interface LabelRequest {
   label: LabelValue;
   reasoning?: string;
 }
+
+export type DetectorVersion = "V1" | "V2" | "V3";
 
 export type FilterStatus = "unlabeled" | "labeled" | "all";
 export type SortOption =

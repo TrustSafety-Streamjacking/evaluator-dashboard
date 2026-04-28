@@ -1,5 +1,6 @@
 import { VideoDocument } from "@/lib/types";
 import { RiskBadge } from "@/components/shared/RiskBadge";
+import { VersionBadge } from "@/components/shared/VersionBadge";
 import { formatDate } from "@/lib/utils";
 import { ExternalLink, Radio } from "lucide-react";
 
@@ -73,6 +74,11 @@ export function MetadataCard({ video }: MetadataCardProps) {
         {/* Detected at */}
         <Row label="Last detected">
           <span>{formatDate(video.detected_at)}</span>
+        </Row>
+
+        {/* Detector version */}
+        <Row label="Detector version">
+          <VersionBadge version={video.detector_version} showTooltip />
         </Row>
 
         {/* Search query */}

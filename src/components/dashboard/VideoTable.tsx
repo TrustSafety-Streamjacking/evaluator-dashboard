@@ -15,6 +15,7 @@ import {
 import { ExternalLink, Radio } from "lucide-react";
 import { formatDateShort } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
+import { VersionBadge } from "@/components/shared/VersionBadge";
 
 interface VideoTableProps {
   videos: VideoDocument[];
@@ -35,6 +36,7 @@ export function VideoTable({ videos, isLoading, filterParams }: VideoTableProps)
               <TableHead className="w-20 text-right">Conf.</TableHead>
               <TableHead className="w-20 text-right">Score</TableHead>
               <TableHead className="w-24">Detected</TableHead>
+              <TableHead className="w-16">Ver.</TableHead>
               <TableHead className="w-24">Label</TableHead>
             </TableRow>
           </TableHeader>
@@ -47,6 +49,7 @@ export function VideoTable({ videos, isLoading, filterParams }: VideoTableProps)
                 <TableCell><Skeleton className="h-4 w-10 ml-auto" /></TableCell>
                 <TableCell><Skeleton className="h-4 w-10 ml-auto" /></TableCell>
                 <TableCell><Skeleton className="h-4 w-20" /></TableCell>
+                <TableCell><Skeleton className="h-5 w-10" /></TableCell>
                 <TableCell><Skeleton className="h-5 w-16" /></TableCell>
               </TableRow>
             ))}
@@ -75,6 +78,7 @@ export function VideoTable({ videos, isLoading, filterParams }: VideoTableProps)
             <TableHead className="w-16 text-right">Conf.</TableHead>
             <TableHead className="w-16 text-right">Score</TableHead>
             <TableHead className="w-24">Detected</TableHead>
+            <TableHead className="w-16">Ver.</TableHead>
             <TableHead className="w-24">Label</TableHead>
           </TableRow>
         </TableHeader>
@@ -131,6 +135,9 @@ export function VideoTable({ videos, isLoading, filterParams }: VideoTableProps)
               </TableCell>
               <TableCell>
                 <span className="text-xs text-slate-500">{formatDateShort(video.detected_at)}</span>
+              </TableCell>
+              <TableCell>
+                <VersionBadge version={video.detector_version} />
               </TableCell>
               <TableCell>
                 <LabelBadge label={video.ground_truth_label} />
