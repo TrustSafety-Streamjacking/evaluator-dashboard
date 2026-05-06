@@ -93,11 +93,7 @@ export interface LabelRequest {
 export type DetectorVersion = "V1" | "V2" | "V3";
 
 export type FilterStatus = "unlabeled" | "labeled" | "all";
-export type SortOption =
-  | "risk_desc"
-  | "confidence_desc"
-  | "confidence_asc"
-  | "detected_desc";
+export type SortOption = "risk_desc" | "detected_desc";
 
 export interface FilterState {
   page: number;

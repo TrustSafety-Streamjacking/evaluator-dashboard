@@ -11,6 +11,8 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { VERSION_DATES } from "@/lib/constants";
 
 export function FilterBar() {
   const router = useRouter();
@@ -19,6 +21,7 @@ export function FilterBar() {
 
   const status = searchParams.get("status") || "unlabeled";
   const risk = searchParams.get("risk_category") || "all";
+  const version = searchParams.get("detector_version") || "all";
   const sort = searchParams.get("sort") || "risk_desc";
   const search = searchParams.get("search") || "";
 
@@ -30,7 +33,7 @@ export function FilterBar() {
       } else {
         params.delete(key);
       }
-      params.set("page", "1"); // reset to page 1 on filter change
+      params.set("page", "1");
       router.push(`${pathname}?${params.toString()}`);
     },
     [router, pathname, searchParams]
@@ -61,17 +64,31 @@ export function FilterBar() {
         </SelectContent>
       </Select>
 
-      <Select value={sort} onValueChange={(v) => updateParam("sort", v)}>
-        <SelectTrigger className="w-44 h-8 text-sm">
-          <SelectValue placeholder="Sort by" />
+      <Select value={version} onValueChange={(v) => updateParam("detector_version", v)}>
+        <SelectTrigger className="w-40 h-8 text-sm">
+          <SelectValue placeholder="Version" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="risk_desc">Risk score (high first)</SelectItem>
-          <SelectItem value="confidence_desc">Confidence (high first)</SelectItem>
-          <SelectItem value="confidence_asc">Confidence (low first)</SelectItem>
-          <SelectItem value="detected_desc">Detected (newest)</SelectItem>
+          <SelectItem value="all">All versions</SelectItem>
+          <SelectItem value="V1" title={VERSION_DATES.V1}>V1</SelectItem>
+          <SelectItem value="V2" title={VERSION_DATES.V2}>V2</SelectItem>
+          <SelectItem value="V3" title={VERSION_DATES.V3}>V3</SelectItem>
+          <SelectItem value="V4" title={`V4`}>V4</SelectItem>
         </SelectContent>
       </Select>
+
+      <div className="inline-flex h-8 rounded-md border border-slate-200 overflow-hidden text-sm">
+        <SortToggle
+          active={sort === "risk_desc"}
+          onClick={() => updateParam("sort", "risk_desc")}
+          label="Risk ↓"
+        />
+        <SortToggle
+          active={sort === "detected_desc"}
+          onClick={() => updateParam("sort", "detected_desc")}
+          label="Newest"
+        />
+      </div>
 
       <div className="relative flex-1 min-w-48 max-w-xs">
         <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
@@ -88,5 +105,31 @@ export function FilterBar() {
         />
       </div>
     </div>
+  );
+}
+
+function SortToggle({
+  active,
+  onClick,
+  label,
+}: {
+  active: boolean;
+  onClick: () => void;
+  label: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      className={cn(
+        "px-3 transition-colors border-r border-slate-200 last:border-r-0",
+        active
+          ? "bg-slate-900 text-white"
+          : "bg-white text-slate-700 hover:bg-slate-50"
+      )}
+    >
+      {label}
+    </button>
   );
 }

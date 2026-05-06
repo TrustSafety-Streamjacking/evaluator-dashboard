@@ -13,10 +13,11 @@ export function DashboardClient() {
   const page = parseInt(searchParams.get("page") || "1");
   const status = searchParams.get("status") || "unlabeled";
   const risk_category = searchParams.get("risk_category") || "all";
+  const detector_version = searchParams.get("detector_version") || "all";
   const search = searchParams.get("search") || "";
   const sort = searchParams.get("sort") || "risk_desc";
 
-  const { data, isLoading } = useVideos({ page, status, risk_category, search, sort });
+  const { data, isLoading } = useVideos({ page, status, risk_category, detector_version, search, sort });
 
   return (
     <div className="flex flex-col flex-1 overflow-hidden">

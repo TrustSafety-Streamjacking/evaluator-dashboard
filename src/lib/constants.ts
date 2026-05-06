@@ -48,8 +48,8 @@ export const VERSION_COLORS: Record<DetectorVersion, string> = {
 
 export const VERSION_DATES: Record<DetectorVersion, string> = {
   V1: "before 2026-01-01",
-  V2: "2026-01-01 – 2026-04-24",
-  V3: "from 2026-04-25",
+  V2: "2026-01-01 - 2026-04-24",
+  V3: "2026-04-25 - present",
 };
 
 export const LABEL_DISPLAY: Record<LabelValue, string> = {

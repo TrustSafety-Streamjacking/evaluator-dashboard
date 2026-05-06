@@ -7,6 +7,7 @@ interface UseVideosParams {
   page?: number;
   status?: string;
   risk_category?: string;
+  detector_version?: string;
   search?: string;
   sort?: string;
 }
@@ -16,6 +17,7 @@ export function useVideos(params: UseVideosParams = {}) {
   if (params.page) query.set("page", String(params.page));
   if (params.status) query.set("status", params.status);
   if (params.risk_category) query.set("risk_category", params.risk_category);
+  if (params.detector_version) query.set("detector_version", params.detector_version);
   if (params.search) query.set("search", params.search);
   if (params.sort) query.set("sort", params.sort);
 

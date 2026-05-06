@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongoose";
 import { Video } from "@/lib/models/Video";
 import { PAGE_SIZE } from "@/lib/constants";
-import { FilterStatus, RiskCategory, SortOption } from "@/lib/types";
+import { DetectorVersion, FilterStatus, RiskCategory, SortOption } from "@/lib/types";
 
 export async function GET(request: NextRequest) {
   try {
@@ -13,6 +13,7 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || String(PAGE_SIZE));
     const status = (searchParams.get("status") || "unlabeled") as FilterStatus;
     const risk_category = searchParams.get("risk_category") || "all";
+    const detector_version = searchParams.get("detector_version") || "all";
     const search = searchParams.get("search") || "";
     const sort = (searchParams.get("sort") || "risk_desc") as SortOption;
 
@@ -33,6 +34,10 @@ export async function GET(request: NextRequest) {
       filter.risk_category = risk_category as RiskCategory;
     }
 
+    if (detector_version !== "all") {
+      filter.detector_version = detector_version as DetectorVersion;
+    }
+
     if (search) {
       filter.$or = [
         ...(filter.$or || []),
@@ -45,21 +50,14 @@ export async function GET(request: NextRequest) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const sortObj: Record<string, any> = {};
     switch (sort) {
-      case "risk_desc":
-        sortObj.total_risk_score = -1;
-        sortObj.confidence_score = -1;
-        break;
-      case "confidence_desc":
-        sortObj.confidence_score = -1;
-        break;
-      case "confidence_asc":
-        sortObj.confidence_score = 1;
-        break;
       case "detected_desc":
         sortObj.detected_at = -1;
         break;
+      case "risk_desc":
       default:
         sortObj.total_risk_score = -1;
+        sortObj.confidence_score = -1;
+        break;
     }
 
     const skip = (page - 1) * limit;

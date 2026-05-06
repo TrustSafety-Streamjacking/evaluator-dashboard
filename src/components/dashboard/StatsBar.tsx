@@ -26,6 +26,7 @@ export function StatsBar({ stats }: StatsBarProps) {
         </div>
         <div className="text-slate-300">|</div>
         <div className="flex items-center gap-4">
+          <span className="text-slate-400 text-xs uppercase tracking-wide">Overall</span>
           <Stat label="TP" value={stats.true_positive} color="text-red-700" />
           <Stat label="FP" value={stats.false_positive} color="text-orange-700" />
           <Stat label="TN" value={stats.true_negative} color="text-green-700" />
