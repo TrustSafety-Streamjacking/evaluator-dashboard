@@ -3,8 +3,8 @@ import { jwtVerify } from "jose";
 
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "fallback-secret-change-me");
 
-const PROTECTED_PAGE_PATHS = ["/dashboard", "/videos"];
-const PROTECTED_API_PATHS = ["/api/videos"];
+const PROTECTED_PAGE_PATHS = ["/dashboard", "/videos", "/runs"];
+const PROTECTED_API_PATHS = ["/api/videos", "/api/runs"];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -49,5 +49,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/videos/:path*", "/api/videos/:path*"],
+  matcher: ["/dashboard/:path*", "/videos/:path*", "/runs/:path*", "/api/videos/:path*", "/api/runs/:path*"],
 };

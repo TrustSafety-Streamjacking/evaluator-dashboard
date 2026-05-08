@@ -1,4 +1,4 @@
-import { DetectorVersion, LabelValue, RiskCategory } from "./types";
+import { DetectorVersion, LabelValue, RiskCategory, RunStatus } from "./types";
 
 export const PAGE_SIZE = 25;
 
@@ -57,4 +57,11 @@ export const LABEL_DISPLAY: Record<LabelValue, string> = {
   false_positive: "FP",
   true_negative: "TN",
   false_negative: "FN",
+};
+
+export const RUN_STATUS_COLORS: Record<RunStatus, string> = {
+  running: "bg-blue-100 text-blue-800 border-blue-200",
+  succeeded: "bg-green-100 text-green-800 border-green-200",
+  failed: "bg-red-100 text-red-800 border-red-200",
+  cancelled: "bg-slate-100 text-slate-800 border-slate-200",
 };

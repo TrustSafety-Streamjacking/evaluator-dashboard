@@ -102,3 +102,51 @@ export interface FilterState {
   search: string;
   sort: SortOption;
 }
+
+export type RunStatus = "running" | "succeeded" | "failed" | "cancelled";
+
+export interface RunStats {
+  videos_processed: number;
+  videos_detected: number;
+  new_detections: number;
+  re_detections: number;
+  live_at_detection: number;
+  errors: number;
+  by_risk: {
+    LOW: number;
+    MEDIUM: number;
+    HIGH: number;
+  };
+}
+
+export interface DetectorRunDocument {
+  _id: string;
+  run_id: string;
+  execution_name: string;
+  job_name: string;
+  started_at: string;
+  completed_at: string | null;
+  duration_seconds: number | null;
+  status: RunStatus;
+  task_count: number;
+  succeeded_count: number;
+  failed_count: number;
+  cancelled_count: number;
+  triggered_by: string;
+  is_scheduled: boolean;
+  log_uri: string;
+  detector_version: DetectorVersion;
+  search_queries: string[];
+  stats: RunStats;
+  error_message: string | null;
+  labels: Record<string, string>;
+  created_at: string;
+}
+
+export interface PaginatedRunsResponse {
+  runs: DetectorRunDocument[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}

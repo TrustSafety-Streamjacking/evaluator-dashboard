@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "seed:reviewer": "tsx scripts/seed-reviewer.ts"
+    "seed:reviewer": "tsx scripts/seed-reviewer.ts",
+    "seed:runs": "tsx scripts/seed-runs.js"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
